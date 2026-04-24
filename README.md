@@ -22,6 +22,7 @@ GitHub (push) → gitdeploy (webhook receiver) → SSH to host → dokku git:syn
 - **Webhook signature verification** — optional HMAC-SHA256 validation
 - **Auto HTTPS → SSH conversion** — converts GitHub HTTPS clone URLs to SSH for `git:sync`
 - **Lightweight** — single Docker container, ~50MB RAM
+- **No per-repo CI config** — one webhook URL for all apps, no workflow files
 
 ## Quick Start
 
@@ -128,7 +129,11 @@ dokku config:set gitdeploy \
 
 ## Why Not Use Dokku's Built-in Git Receive?
 
-Dokku's `git push dokku main` requires shell access or a CI runner for each repo. gitdeploy works with **any** GitHub repo — just add a webhook, no CI pipeline needed. One container handles all your apps.
+Dokku's `git push dokku main` requires shell access or a CI runner for each repo. gitdeploy works with **any** GitHub repo — just add a webhook URL, no per-repo workflow files needed. One container handles all your apps.
+
+**Compared to GitHub Actions:**
+- GitHub Actions: needs a workflow YAML + SSH key in GitHub Secrets **per repo**
+- gitdeploy: needs one webhook URL added per repo, all SSH keys stay on your server
 
 ## Requirements
 
