@@ -62,7 +62,7 @@ async function deploy(appName, repoUrl) {
 
 const express = require('express');
 const app = express();
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
 
 app.get('/', function(req, res) {
     res.json({ service: 'git-deploy', apps: APP_MAP, status: 'running' });
@@ -112,6 +112,12 @@ function handleWebhook(req, res) {
 
 app.post('/webhook', handleWebhook);
 app.post('/', handleWebhook);
+
+// Error handler — log the error, return 500 with details
+app.use(function(err, req, res, next) {
+    console.error('[' + new Date().toISOString() + '] ERROR: ' + (err.type || err.message || err));
+    res.status(err.status || 500).json({ error: err.type || err.message || 'Internal error' });
+});
 
 app.listen(PORT, function() {
     console.log('Git webhook on port ' + PORT);
